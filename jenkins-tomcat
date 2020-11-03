@@ -1,0 +1,26 @@
+pipeline{
+        agent any
+        stages{
+            stage("git checkout"){
+                steps{
+                    git 'https://github.com/laxman-mandha/my-repo/'
+                }
+            }
+            stage("maven build"){
+            steps{
+              sh "mvn -f /gs-maven/initial/pom.xml clean package"
+             }
+            }
+            stage("deploy-dev"){
+            steps{
+              sshagent(['tomcat']) {
+                sh """
+                   scp -o StrictHostKeyChecking=no /gs-maven/initial/target/gs-maven-0.1.0.jar ec2-user@65.0.29.114:/opt/tomcat/webapps/
+                   ssh ec2-user@65.0.29.114 /opt/tomcat/bin/shutdown.sh
+                   ssh ec2-user@65.0.29.114 /opt/tomcat/bin/startup.sh
+                   """
+                }
+              }
+            }
+        }
+}
