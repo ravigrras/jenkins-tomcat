@@ -13,7 +13,7 @@ pipeline{
             }
             stage("deploy-dev"){
             steps{
-              sshagent(['tomcat']) {
+              sshagent(['b040c080-6975-498e-bf92-da402fa38701']) {
                 sh """
                    scp -o StrictHostKeyChecking=no /gs-maven/initial/target/gs-maven-0.1.0.jar ec2-user@65.0.29.114:/opt/tomcat/webapps/
                    ssh ec2-user@65.0.29.114 /opt/tomcat/bin/shutdown.sh
